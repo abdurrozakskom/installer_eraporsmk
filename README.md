@@ -63,6 +63,22 @@ User & password default sesuai dengan dokumentasi resmi eRapor SMK.
 
 ---
 
+## 🛠️ Troubleshooting
+Jika domain tidak terbuka, tambahkan domain ke file /etc/hosts:
+```bash
+sudo nano /etc/hosts
+```
+Tambahkan baris:
+```bash
+127.0.0.1   erapor.local
+```
+Jika error PHP extension, pastikan semua modul sudah terinstall:
+```bash
+sudo apt install -y php-pgsql php-mbstring php-xml php-curl php-zip php-bcmath
+```
+
+---
+
 ## 📜 Lisensi
 * Script ini bersifat open source dan bebas dimodifikasi sesuai kebutuhan.
 * eRapor SMK adalah aplikasi resmi dari Direktorat SMK, Kemdikbud RI.
