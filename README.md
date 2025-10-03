@@ -47,6 +47,8 @@ Script akan meminta:
 - Username database
 - Password database
 
+---
+
 ## 📂 Lokasi Instalasi
 - Direktori aplikasi: /var/www/erapor.local/
 - VirtualHost Apache: /etc/apache2/sites-available/erapor.local.conf
@@ -59,9 +61,11 @@ sudo ./install_erapor.sh](http://erapor.local
 ```
 User & password default sesuai dengan dokumentasi resmi eRapor SMK.
 
-## Lisensi
-Script ini bersifat open source dan bebas dimodifikasi sesuai kebutuhan.
-eRapor SMK adalah aplikasi resmi dari Direktorat SMK, Kemdikbud RI.
+---
+
+## 📜 Lisensi
+* Script ini bersifat open source dan bebas dimodifikasi sesuai kebutuhan.
+* eRapor SMK adalah aplikasi resmi dari Direktorat SMK, Kemdikbud RI.
 
 ## 🙌 Kontributor
 * Dibuat oleh Abdur Rozak (SMKS Yasmida)
