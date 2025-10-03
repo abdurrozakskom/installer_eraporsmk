@@ -1,6 +1,6 @@
-# 🚀 eRapor SMK 7 Auto Installer
+# 🚀 eRapor SMK Auto Installer
 
-Script Bash untuk otomatisasi instalasi **eRapor SMK 7** dengan stack:
+Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan stack:
 
 - Apache2 + PHP-FPM
 - PHP 8.1/8.2/8.3 (otomatis menyesuaikan versi di server)
