@@ -11,8 +11,8 @@
 # Threads  : https://threads.com/@abdurrozak.skom
 # Lynk.id  : https://lynk.id/abdurrozak.skom
 # Donasi:
-# • Saweria  : https://saweria.co/abdurrozak.skom
-# • Trakteer : https://trakteer.id/abdurrozak.skom
+# • Saweria  : https://saweria.co/abdurrozakskom
+# • Trakteer : https://trakteer.id/abdurrozakskom
 # • Paypal   : https://paypal.me/abdurrozakskom
 # License: MIT
 # =========================================================
