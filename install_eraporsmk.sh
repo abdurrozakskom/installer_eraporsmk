@@ -35,13 +35,13 @@ echo -e "${CYAN}=== Mulai instalasi eRaporSMK $(date) ===${RESET}"
 
 # Loop hingga password benar
 while true; do
-    read -sp "$(echo -e "${RED}Masukkan password untuk melanjutkan instalasi: ${RESET}")" INPUT_PASS
+    read -sp "$(echo -e "${YELLOW}Masukkan password untuk melanjutkan instalasi: ${RESET}")" INPUT_PASS
     echo
     if [[ "$INPUT_PASS" == "$INSTALL_PASS" ]]; then
         echo -e "${GREEN}✔ Password benar, melanjutkan instalasi...${RESET}"
         break
     else
-        echo -e "${YELLOW}❌ Password salah, coba lagi!${RESET}"
+        echo -e "${RED}❌ Password salah, coba lagi!${RESET}"
     fi
 done
 
