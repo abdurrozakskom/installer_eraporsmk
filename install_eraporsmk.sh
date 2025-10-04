@@ -27,15 +27,33 @@ LOG_FILE="/var/log/eraporsmk/erapor_install.log"
 touch $LOG_FILE
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-echo -e "${CYAN}=== Mulai instalasi eRapor SMK $(date) ===${RESET}"
+echo -e "${CYAN}=== Mulai instalasi eRaporSMK $(date) ===${RESET}"
+
+# ---- Verifikasi Password Sebelum Instalasi ----
+INSTALL_PASS="RozakGanteng"  # ganti dengan password yang diinginkan
+echo -e "${CYAN}=== Mulai instalasi eRaporSMK $(date) ===${RESET}"
+
+# Loop hingga password benar
+while true; do
+    read -sp "$(echo -e "${RED}Masukkan password untuk melanjutkan instalasi: ${RESET}")" INPUT_PASS
+    echo
+    if [[ "$INPUT_PASS" == "$INSTALL_PASS" ]]; then
+        echo -e "${GREEN}✔ Password benar, melanjutkan instalasi...${RESET}"
+        break
+    else
+        echo -e "${YELLOW}❌ Password salah, coba lagi!${RESET}"
+    fi
+done
 
 # ---- Input User ----
-echo -e "${YELLOW}[INPUT] Silakan masukkan konfigurasi eRapor SMK:${RESET}"
-read -p "IP Server (contoh: 192.168.66.99): " SERVER_IP
-read -p "APP_NAME (contoh: eRapor SMK): " APP_NAME
-read -p "Nama DB PostgreSQL: " DB_NAME
-read -p "Username DB PostgreSQL: " DB_USER
-read -sp "Password DB PostgreSQL: " DB_PASS
+echo -e "${YELLOW}[INPUT] Silakan masukkan konfigurasi eRaporSMK:${RESET}"
+echo -e "${CYAN}💻 Konfigurasi eRaporSMK${RESET}"
+read -p "$(echo -e "${CYAN}IP Server${GREEN} (contoh: 192.168.66.99)${CYAN}: ${RESET}")" SERVER_IP
+read -p "$(echo -e "${CYAN}APP_NAME${GREEN} (contoh: eRapor SMK)${CYAN}: ${RESET}")" APP_NAME
+read -p "$(echo -e "${CYAN}Nama DB PostgreSQL${CYAN}: ${RESET}")" DB_NAME
+read -p "$(echo -e "${CYAN}Username DB PostgreSQL${CYAN}: ${RESET}")" DB_USER
+read -sp "$(echo -e "${RED}Password DB PostgreSQL${CYAN}: ${RESET}")" DB_PASS
+echo -e "\n${GREEN}✔ Input berhasil!${RESET}"
 echo -e "\n"
 
 # ---- Update Sistem ----

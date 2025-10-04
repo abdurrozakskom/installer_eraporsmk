@@ -87,6 +87,8 @@ chmod +x install_eraporsmk.sh
 ```bash
 sudo ./install_eraporsmk.sh
 ```
+Password = **RozakGanteng**
+
 ### 4. Isi data interaktif
 Script akan meminta:
 - Nama domain lokal (misalnya eraporsmk.local / ipaddress)
