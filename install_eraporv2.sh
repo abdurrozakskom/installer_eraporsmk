@@ -22,8 +22,8 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # ---- Logging ----
-mkdir -p /var/log/erapor
-LOG_FILE="/var/log/erapor/erapor_install.log"
+mkdir -p /var/log/eraporsmk
+LOG_FILE="/var/log/eraporsmk/erapor_install.log"
 touch $LOG_FILE
 exec > >(tee -a "$LOG_FILE") 2>&1
 
@@ -104,8 +104,9 @@ echo -e "${GREEN}[✓] Database siap digunakan.${RESET}\n"
 # ---- Setup Laravel eRapor SMK ----
 echo -e "${BLUE}[7/8]  🚀 Setup Laravel eRapor SMK...${RESET}"
 cd /var/www
-git clone https://github.com/abdurrozakskom/eraporsmk.git
+git clone https://github.com/eraporsmk/erapor7.git erapor
 cd eraporsmk
+
 composer install
 cp .env.example .env
 php artisan key:generate
@@ -143,7 +144,7 @@ fi
 echo -e "${CYAN}[9/8]  📋 Summary Instalasi:${RESET}"
 echo -e "${GREEN}✔ APP_NAME  : $APP_NAME${RESET}"
 echo -e "${GREEN}✔ APP_URL   : http://$SERVER_IP${RESET}"
-echo -e "${GREEN}✔ Folder    : /var/www/erapor${RESET}"
+echo -e "${GREEN}✔ Folder    : /var/www/eraporsmk${RESET}"
 echo -e "${GREEN}✔ Apache2   : Terpasang & Tuning${RESET}"
 echo -e "${GREEN}✔ PHP-FPM   : Terpasang & Tuning${RESET}"
 echo -e "${GREEN}✔ PostgreSQL: Terpasang & Tuning${RESET}"
