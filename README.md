@@ -66,7 +66,7 @@ Setiap donasi sangat membantu untuk pengembangan fitur baru dan pemeliharaan scr
 ## ⚙️ Cara Penggunaan
 ### 0. Persiapan
 - Update Repository Sistem Operasi Servernya
-- Update
+- lalu Update
 ```bash
 apt update -y
 ```
