@@ -104,7 +104,7 @@ echo -e "${GREEN}[✓] Database siap digunakan.${RESET}\n"
 # ---- Setup Laravel eRapor SMK ----
 echo -e "${BLUE}[7/17]  🚀 Setup Laravel eRapor SMK...${RESET}"
 cd /var/www
-git clone https://github.com/eraporsmk/erapor7.git erapor
+git clone https://github.com/eraporsmk/erapor7.git eraporsmk
 cd eraporsmk
 cp .env.example .env
 
