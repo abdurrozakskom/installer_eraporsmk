@@ -3,7 +3,7 @@
 
 ---
 
-Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan stack:
+Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan stack di Sistem Operasi Linux Server :
 
 - Apache2 + PHP-FPM
 - PHP 8.1/8.2/8.3 (otomatis menyesuaikan versi di server)
