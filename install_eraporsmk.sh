@@ -45,7 +45,7 @@ echo -e "${GREEN}[✓] Sistem updated.${RESET}\n"
 
 # ---- Paket Pendukung ----
 echo -e "${BLUE}[2/17]  📦 Install Paket Pendukung...${RESET}"
-apt install -y unzip curl cowsay lsb-release
+apt install -y unzip curl cowsay figlet lsb-release
 echo -e "${GREEN}[✓] Paket pendukung terpasang.${RESET}\n"
 
 # ---- Install LAMP Stack ----
@@ -185,12 +185,9 @@ echo -e "${BLUE}[15/17] Update Versi Aplikasi"
 php artisan erapor:update
 echo -e "${GREEN}[✓] Update Versi Aplikasip selesai.${RESET}\n"
 
-# ---- Fun cowsay ----
-if command -v cowsay >/dev/null 2>&1; then
-    cowsay "eRaporSMK"
-else
-    echo -e "${YELLOW}[i] Install cowsay untuk tampilan lucu: sudo apt install cowsay${RESET}"
-fi
+# ---- Fun cowsay & Figlet ----
+cowsay "eRaporSMK"
+figlet -c "eRaporSMK"
 
 # ---- Summary ----
 echo -e "${CYAN}[16/17]  📋 Summary Instalasi:${RESET}"
