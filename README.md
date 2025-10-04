@@ -30,11 +30,11 @@ Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan sta
 - Update Repository Sistem Operasi Servernya
 - Update
 ```bash
-apt update
+apt update -y
 ```
 - Install Git
 ```bash
-apt install git
+apt install git -y
 ```
 ### 1. Clone Repo
 ```bash
