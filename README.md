@@ -56,11 +56,11 @@ cd installer_eraporsmk
 ```
 ### 2. Beri izin eksekusi
 ```bash
-chmod +x install_erapor.sh
+chmod +x install_eraporsmk.sh
 ```
 ### 3. Jalankan script
 ```bash
-sudo ./install_erapor.sh
+sudo ./install_eraporsmk.sh
 ```
 ### 4. Isi data interaktif
 Script akan meminta:
@@ -91,10 +91,11 @@ User & password default sesuai dengan dokumentasi resmi eRapor SMK.
 Ikuti saya di sosial media untuk tips, update, dan info terbaru seputar eRapor SMK:
 
 - **GitHub**    : [https://github.com/abdurrozakskom](https://github.com/abdurrozakskom)  
-- **Instagram** : [https://instagram.com/abdurrozak](https://instagram.com/abdurrozak)  
-- **Facebook**  : [https://facebook.com/abdurrozak](https://facebook.com/abdurrozak)  
-- **Twitter**   : [https://twitter.com/abdurrozak](https://twitter.com/abdurrozak)  
-- **YouTube**   : [https://youtube.com/@abdurrozak](https://youtube.com/@abdurrozak)  
+- **Lynk.id**   : [https://lynk.id/abdurrozak.skom](https://lynk.id/abdurrozak.skom)  
+- **Instagram** : [https://instagram.com/abdurrozak.skom](https://instagram.com/abdurrozak.skom)  
+- **Facebook**  : [https://facebook.com/abdurrozak.skom](https://facebook.com/abdurrozak.skom)  
+- **TikTok**   : [https://tiktok.com/abdurrozak.skom](https://tiktok.com/abdurrozak.skom)  
+- **YouTube**   : [https://www.youtube.com/@AbdurRozakSKom](https://www.youtube.com/@AbdurRozakSKom)  
 
 ---
 
