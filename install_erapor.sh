@@ -37,7 +37,7 @@ apt update && apt upgrade -y
 
 # ---- Install Paket ----
 echo "[2/13] Install Paket Pendukung"
-apt install -y unzip curl git
+apt install -y unzip curl git cowsay
 
 # ---- Install Paket LAMP Stack----
 echo "[3/13] Install Paket Apache2"
@@ -145,12 +145,19 @@ systemctl restart php${PHP_VERSION}-fpm
 echo "[13/13] Update Versi Aplikasi"
 php artisan erapor:update
 
+# ---- Fun cowsay ----
+if command -v cowsay >/dev/null 2>&1; then
+    cowsay "eRaporSMK"
+else
+    echo "[i] Install cowsay untuk melihat pesan lucu: sudo apt install cowsay"
+fi
 # ---- Summary & Info Server ----
 echo "[DONE] Instalasi selesai! Info server & versi paket:"
 echo "🎉 Instalasi eRapor SMK selesai!"
 echo "APP_NAME : $APP_NAME"
 echo "APP_URL  : http://$SERVER_IP"
 echo "Redis    : Terpasang dan terhubung ke Laravel"
+echo "Folder eRapor berada di: /var/www/erapor"
 echo "Buka di browser: http://$SERVER_IP"
 echo ""
 echo "📌 Spesifikasi Server & Versi Paket:"
