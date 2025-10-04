@@ -1,7 +1,6 @@
 #!/bin/bash
 # =========================================================
-# Auto Installer eRapor SMK 7 (IP-based, Redis enabled)
-# All-in-One Final v5
+# Auto Installer eRapor SMK 7
 # by Abdur Rozak, SMKS YASMIDA Ambarawa
 # GitHub: https://github.com/abdurrozakskom
 # License: MIT
@@ -32,15 +31,22 @@ read -p "Masukkan username database: " DB_USER
 read -sp "Masukkan password database: " DB_PASS
 echo ""
 
-# ---- Update & Install Paket ----
-echo "[1/10] Update sistem & install paket dasar + PHP extensions + Redis..."
+# ---- Update Paket ----
+echo "[1/13] Update Sistem & Upgrade Sistem"
 apt update && apt upgrade -y
-apt install -y apache2 libapache2-mod-fcgid unzip curl git \
+
+# ---- Install Paket ----
+echo "[2/13] Install Paket Pendukung"
+apt install -y unzip curl git
+
+# ---- Install Paket LAMP Stack----
+echo "[3/13] Install Paket Apache2"
+apt install -y apache2 libapache2-mod-fcgid \
     php php-cli php-fpm php-pgsql php-xml php-mbstring php-curl php-zip php-bcmath php-gd php-redis \
     composer postgresql postgresql-contrib redis-server sudo lsb-release
 
 # ---- Setup PostgreSQL ----
-echo "[2/10] Membuat database PostgreSQL..."
+echo "[4/13] Membuat database PostgreSQL..."
 sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
 sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
@@ -48,14 +54,14 @@ sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON SCHEMA public TO $
 sudo -u postgres psql -d $DB_NAME -c "ALTER DATABASE $DB_NAME OWNER TO $DB_USER;"
 
 # ---- Clone eRapor ----
-echo "[3/10] Clone repo eRapor SMK..."
+echo "[5/13] Clone repo eRapor SMK..."
 cd /var/www/
 git clone https://github.com/eraporsmk/erapor7.git erapor
 cd erapor
 cp .env.example .env
 
 # ---- Update .env (APP + DB + Redis) ----
-echo "[4/10] Konfigurasi .env..."
+echo "[6/13] Konfigurasi .env..."
 sed -i "s/^APP_NAME=.*/APP_NAME=\"$APP_NAME\"/" .env
 sed -i "s#^APP_URL=.*#APP_URL=http://$SERVER_IP#" .env
 
@@ -75,15 +81,17 @@ sed -i "s/REDIS_PASSWORD=.*/REDIS_PASSWORD=null/" .env
 sed -i "s/REDIS_PORT=.*/REDIS_PORT=6379/" .env
 
 # ---- Install Composer Dependencies ----
-echo "[5/10] Install Composer dependencies (vendor)..."
+echo "[7/13] Install Composer dependencies (vendor)..."
 COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # ---- Laravel Setup ----
-echo "[6/10] Setup Laravel..."
+echo "[8/13] Setup Laravel..."
 php artisan key:generate
-php artisan migrate --seed --no-interaction
+php artisan migrate --no-interaction
+php artisan db:seed --no-interaction
 
 # ---- Storage link check ----
+echo "[9/13] Storage link check..."
 if [ ! -L public/storage ]; then
     php artisan storage:link
 else
@@ -91,7 +99,7 @@ else
 fi
 
 # ---- Fix Permission & Clear Cache ----
-echo "[7/10] Fix permission & clear cache..."
+echo "[10/13] Fix permission & clear cache..."
 chown -R www-data:www-data /var/www/erapor
 chmod -R 775 /var/www/erapor/storage /var/www/erapor/bootstrap/cache
 php artisan config:clear
@@ -100,12 +108,12 @@ php artisan route:clear
 php artisan view:clear
 
 # ---- Restart Redis ----
-echo "[8/10] Restart Redis server..."
+echo "[11/13] Restart Redis server..."
 systemctl enable redis-server
 systemctl restart redis-server
 
 # ---- Apache VirtualHost ----
-echo "[9/10] Konfigurasi Apache VirtualHost..."
+echo "[12/13] Konfigurasi Apache VirtualHost..."
 PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")
 VHOST_FILE="/etc/apache2/sites-available/erapor.conf"
 
@@ -133,8 +141,12 @@ a2enmod proxy_fcgi setenvif rewrite
 systemctl restart apache2
 systemctl restart php${PHP_VERSION}-fpm
 
+# ---- Update Versi Aplikasi ----
+echo "[13/13] Update Versi Aplikasi"
+php artisan erapor:update
+
 # ---- Summary & Info Server ----
-echo "[10/10] Instalasi selesai! Info server & versi paket:"
+echo "[DONE] Instalasi selesai! Info server & versi paket:"
 echo "🎉 Instalasi eRapor SMK selesai!"
 echo "APP_NAME : $APP_NAME"
 echo "APP_URL  : http://$SERVER_IP"
