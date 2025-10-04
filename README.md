@@ -44,10 +44,12 @@ cd installer_eraporsmk
 ### 2. Beri izin eksekusi
 ```bash
 chmod +x install_erapor.sh
+chmod +x install_eraporv2.sh
 ```
 ### 3. Jalankan script
 ```bash
 sudo ./install_erapor.sh
+sudo ./install_eraporv2.sh
 ```
 ### 4. Isi data interaktif
 Script akan meminta:
@@ -74,6 +76,24 @@ User & password default sesuai dengan dokumentasi resmi eRapor SMK.
 ---
 
 ## 🛠️ Troubleshooting
+Jika *Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process*
+```bash
+ps aux | grep apt
+```
+Ganti <PID> dengan nomor proses apt yang muncul.
+```bash
+sudo kill -9 <PID>
+```
+```bash
+sudo rm /var/lib/dpkg/lock-frontend
+sudo rm /var/lib/apt/lists/lock
+sudo rm /var/cache/apt/archives/lock
+```
+```bash
+sudo dpkg --configure -a
+sudo apt update
+```
+
 Jika domain tidak terbuka, tambahkan domain ke file /etc/hosts:
 ```bash
 sudo nano /etc/hosts
