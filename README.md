@@ -1,5 +1,5 @@
 # 🚀 eRapor SMK Auto Installer
-
+<p align="center"><img src="https://tjkt.smkyasmida.sch.id/wp-content/uploads/2025/02/Logo-TJKT-2022-Sampul-Youtube-1.png" width="600"></p>
 Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan stack:
 
 - Apache2 + PHP-FPM
