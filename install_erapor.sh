@@ -48,7 +48,7 @@ apt update && apt upgrade -y
 
 # ---- Install Paket ----
 echo "[2/13] Install Paket Pendukung"
-apt install -y unzip curl git cowsay
+apt install -y unzip curl cowsay
 
 # ---- Install Paket LAMP Stack----
 echo "[3/13] Install Paket Apache2"
