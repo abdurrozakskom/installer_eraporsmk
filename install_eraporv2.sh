@@ -39,24 +39,24 @@ read -sp "Password DB PostgreSQL: " DB_PASS
 echo -e "\n"
 
 # ---- Update Sistem ----
-echo -e "${BLUE}[1/8]  🔄 Update & Upgrade Sistem...${RESET}"
+echo -e "${BLUE}[1/17]  🔄 Update & Upgrade Sistem...${RESET}"
 apt update && apt upgrade -y
 echo -e "${GREEN}[✓] Sistem updated.${RESET}\n"
 
 # ---- Paket Pendukung ----
-echo -e "${BLUE}[2/8]  📦 Install Paket Pendukung...${RESET}"
+echo -e "${BLUE}[2/17]  📦 Install Paket Pendukung...${RESET}"
 apt install -y unzip curl cowsay lsb-release
 echo -e "${GREEN}[✓] Paket pendukung terpasang.${RESET}\n"
 
 # ---- Install LAMP Stack ----
-echo -e "${BLUE}[3/8]  🖥️ Install Apache2 + PHP + PostgreSQL + Redis...${RESET}"
+echo -e "${BLUE}[3/17]  🖥️ Install Apache2 + PHP + PostgreSQL + Redis...${RESET}"
 apt install -y apache2 libapache2-mod-fcgid \
 php php-cli php-fpm php-pgsql php-xml php-mbstring php-curl php-zip php-bcmath php-gd php-redis \
 composer postgresql postgresql-contrib redis-server
 echo -e "${GREEN}[✓] LAMP Stack terpasang.${RESET}\n"
 
 # ---- Tuning Apache2 ----
-echo -e "${BLUE}[4/8]  ⚡ Tuning Apache2...${RESET}"
+echo -e "${BLUE}[4/17]  ⚡ Tuning Apache2...${RESET}"
 a2enmod mpm_prefork >/dev/null 2>&1
 MPM_CONF="/etc/apache2/mods-available/mpm_prefork.conf"
 APACHE_CONF="/etc/apache2/apache2.conf"
@@ -74,7 +74,7 @@ systemctl restart apache2
 echo -e "${GREEN}[✓] Apache2 tuning selesai.${RESET}\n"
 
 # ---- Tuning PHP-FPM ----
-echo -e "${BLUE}[5/8]  ⚡ Tuning PHP-FPM...${RESET}"
+echo -e "${BLUE}[5/17]  ⚡ Tuning PHP-FPM...${RESET}"
 PHP_FPM_POOL="/etc/php/$(php -v | head -n1 | awk '{print $2}' | cut -d. -f1,2)/fpm/pool.d/www.conf"
 PHP_INI="/etc/php/$(php -v | head -n1 | awk '{print $2}' | cut -d. -f1,2)/fpm/php.ini"
 if [ -f "$PHP_FPM_POOL" ]; then
@@ -93,7 +93,7 @@ systemctl restart php*-fpm
 echo -e "${GREEN}[✓] PHP-FPM tuning selesai.${RESET}\n"
 
 # ---- Setup PostgreSQL ----
-echo -e "${BLUE}[6/8]  🗄️ Setup PostgreSQL...${RESET}"
+echo -e "${BLUE}[6/17]  🗄️ Setup PostgreSQL...${RESET}"
 sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
 sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
@@ -102,23 +102,68 @@ sudo -u postgres psql -d $DB_NAME -c "ALTER DATABASE $DB_NAME OWNER TO $DB_USER;
 echo -e "${GREEN}[✓] Database siap digunakan.${RESET}\n"
 
 # ---- Setup Laravel eRapor SMK ----
-echo -e "${BLUE}[7/8]  🚀 Setup Laravel eRapor SMK...${RESET}"
+echo -e "${BLUE}[7/17]  🚀 Setup Laravel eRapor SMK...${RESET}"
 cd /var/www
 git clone https://github.com/eraporsmk/erapor7.git erapor
 cd eraporsmk
-
-composer install
 cp .env.example .env
+
+# ---- Update .env (APP + DB + Redis) ----
+echo -e "${BLUE}[8/17] Konfigurasi .env..."
+sed -i "s/^APP_NAME=.*/APP_NAME=\"$APP_NAME\"/" .env
+sed -i "s#^APP_URL=.*#APP_URL=http://$SERVER_IP#" .env
+
+sed -i "s/DB_CONNECTION=.*/DB_CONNECTION=pgsql/" .env
+sed -i "s/DB_HOST=.*/DB_HOST=127.0.0.1/" .env
+sed -i "s/DB_PORT=.*/DB_PORT=5432/" .env
+sed -i "s/DB_DATABASE=.*/DB_DATABASE=$DB_NAME/" .env
+sed -i "s/DB_USERNAME=.*/DB_USERNAME=$DB_USER/" .env
+sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$DB_PASS/" .env
+
+# Redis
+sed -i "s/CACHE_DRIVER=.*/CACHE_DRIVER=redis/" .env
+sed -i "s/SESSION_DRIVER=.*/SESSION_DRIVER=redis/" .env
+sed -i "s/QUEUE_CONNECTION=.*/QUEUE_CONNECTION=redis/" .env
+sed -i "s/REDIS_HOST=.*/REDIS_HOST=127.0.0.1/" .env
+sed -i "s/REDIS_PASSWORD=.*/REDIS_PASSWORD=null/" .env
+sed -i "s/REDIS_PORT=.*/REDIS_PORT=6379/" .env
+
+# ---- Install Composer Dependencies ----
+echo -e "${BLUE}[9/17] Install Composer dependencies (vendor)..."
+COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist --optimize-autoloader
+
+# ---- Laravel Setup ----
+echo -e "${BLUE}[10/17] Setup Laravel..."
 php artisan key:generate
-php artisan migrate
-php artisan db:seed
-php artisan storage:link
+php artisan migrate --no-interaction
+php artisan db:seed --no-interaction
+
+# ---- Storage link check ----
+echo -e "${BLUE}[11/17] Storage link check..."
+if [ ! -L public/storage ]; then
+    php artisan storage:link
+else
+    echo -e "${BLUE}[i] Storage link sudah ada, skip."
+fi
+
+# ---- Fix Permission & Clear Cache ----
+echo -e "${BLUE}[12/17] Fix permission & clear cache..."
 chown -R www-data:www-data /var/www/eraporsmk
 chmod -R 775 /var/www/eraporsmk/storage /var/www/eraporsmk/bootstrap/cache
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
 echo -e "${GREEN}[✓] Laravel setup selesai.${RESET}\n"
 
+# ---- Restart Redis ----
+echo -e "${BLUE}[13/17] Restart Redis server..."
+systemctl enable redis-server
+systemctl restart redis-server
+
+
 # ---- VirtualHost ----
-echo -e "${BLUE}[8/8]  🌐 Setup VirtualHost Apache...${RESET}"
+echo -e "${BLUE}[14/17]  🌐 Setup VirtualHost Apache...${RESET}"
 VHOST_CONF="/etc/apache2/sites-available/eraporsmk.conf"
 cat <<EOF > $VHOST_CONF
 <VirtualHost *:80>
@@ -131,7 +176,14 @@ cat <<EOF > $VHOST_CONF
 EOF
 a2ensite eraporsmk.conf
 systemctl reload apache2
+a2enmod proxy_fcgi setenvif rewrite
+systemctl restart php${PHP_VERSION}-fpm
 echo -e "${GREEN}[✓] VirtualHost siap.${RESET}\n"
+
+# ---- Update Versi Aplikasi ----
+echo -e "${BLUE}[15/17] Update Versi Aplikasi"
+php artisan erapor:update
+echo -e "${GREEN}[✓] Update Versi Aplikasip selesai.${RESET}\n"
 
 # ---- Fun cowsay ----
 if command -v cowsay >/dev/null 2>&1; then
@@ -141,7 +193,7 @@ else
 fi
 
 # ---- Summary ----
-echo -e "${CYAN}[9/8]  📋 Summary Instalasi:${RESET}"
+echo -e "${CYAN}[16/17]  📋 Summary Instalasi:${RESET}"
 echo -e "${GREEN}✔ APP_NAME  : $APP_NAME${RESET}"
 echo -e "${GREEN}✔ APP_URL   : http://$SERVER_IP${RESET}"
 echo -e "${GREEN}✔ Folder    : /var/www/eraporsmk${RESET}"
@@ -158,6 +210,7 @@ echo ""
 echo -e "${CYAN}📌 Credit Author:${RESET}"
 echo -e "${YELLOW}Abdur Rozak, SMKS YASMIDA Ambarawa${RESET}"
 echo -e "GitHub: https://github.com/abdurrozakskom"
+echo -e "Donasi: https://www.youtube.com/@AbdurRozakSKom"
 
 echo -e "${CYAN}📌 Spesifikasi Server:${RESET}"
 echo -e "${GREEN}- OS        : $(lsb_release -ds)${RESET}"
@@ -168,4 +221,4 @@ echo -e "${GREEN}- PostgreSQL: $(psql --version | awk '{print $3}')${RESET}"
 echo -e "${GREEN}- Redis     : $(redis-server --version | awk '{print $3}' | sed 's/=//')${RESET}"
 echo -e "${GREEN}- Composer  : $(composer --version | awk '{print $3}')${RESET}"
 
-echo -e "${CYAN}[10/8]  🎉 Instalasi selesai! Selamat menggunakan eRapor SMK 🎉${RESET}"
+echo -e "${CYAN}[17/17]  🎉 Instalasi selesai! Selamat menggunakan eRapor SMK 🎉${RESET}"
