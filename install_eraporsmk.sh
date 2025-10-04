@@ -12,7 +12,7 @@
 # Lynk.id  : https://lynk.id/abdurrozak.skom
 # Donasi:
 # • Saweria  : https://saweria.co/abdurrozakskom
-# • Trakteer : https://trakteer.id/abdurrozakskom
+# • Trakteer : https://trakteer.id/abdurrozakskom/gift
 # • Paypal   : https://paypal.me/abdurrozakskom
 # License: MIT
 # =========================================================
@@ -257,7 +257,7 @@ echo ""
 # ---- Donasi ----
 echo -e "${CYAN}💖 Jika script ini bermanfaat, silakan donasi untuk mendukung pengembangan:${RESET}"
 echo -e "${YELLOW}• Saweria  : \e]8;;https://saweria.co/abdurrozakskom\ahttps://saweria.co/abdurrozakskom\e]8;;\a${RESET}"
-echo -e "${YELLOW}• Trakteer : \e]8;;https://trakteer.id/abdurrozakskom\ahttps://trakteer.id/abdurrozakskom\e]8;;\a${RESET}"
+echo -e "${YELLOW}• Trakteer : \e]8;;https://trakteer.id/abdurrozakskom/gift\ahttps://trakteer.id/abdurrozakskom/gift\e]8;;\a${RESET}"
 echo -e "${YELLOW}• Paypal   : \e]8;;https://paypal.me/abdurrozakskom\ahttps://paypal.me/abdurrozakskom\e]8;;\a${RESET}"
 echo ""
 # ---- Sosial Media ----
