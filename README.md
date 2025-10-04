@@ -29,7 +29,7 @@ Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan sta
 
 ### 1. Clone Repo
 ```bash
-git clone https://github.com/username/erapor7-installer.git
+git clone https://github.com/abdurrozakskom/erapor7-installer.git
 cd erapor7-installer
 ```
 ### 2. Beri izin eksekusi
