@@ -23,8 +23,19 @@ if [ "$EUID" -ne 0 ]; then
   exit
 fi
 
+# Lokasi log file
+# Membuat log file dan mengalihkan semua output stdout & stderr
+exec > >(tee -a "$LOG_FILE") 2>&1
+mkdir -p /var/log/erapor
+LOG_FILE="/var/log/erapor/erapor_install.log"
+touch $LOG_FILE
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+echo "=== Mulai instalasi eRapor SMK $(date) ==="
+
+
 # ---- Input User ----
-read -p "Masukkan IP server (contoh: 172.16.9.253): " SERVER_IP
+read -p "Masukkan IP server (contoh: 192.168.66.99): " SERVER_IP
 read -p "Masukkan APP Name (contoh: eRapor SMK): " APP_NAME
 read -p "Masukkan nama database PostgreSQL: " DB_NAME
 read -p "Masukkan username database: " DB_USER
@@ -45,6 +56,56 @@ apt install -y apache2 libapache2-mod-fcgid \
     php php-cli php-fpm php-pgsql php-xml php-mbstring php-curl php-zip php-bcmath php-gd php-redis \
     composer postgresql postgresql-contrib redis-server sudo lsb-release
 
+# ---- Tuning Apache2 ----
+echo "[3/13] Tuning Apache2 untuk performa eRapor SMK..."
+
+# Pastikan menggunakan mpm_prefork
+a2enmod mpm_prefork >/dev/null 2>&1
+
+APACHE_CONF="/etc/apache2/apache2.conf"
+MPM_CONF="/etc/apache2/mods-available/mpm_prefork.conf"
+
+if [ -f "$MPM_CONF" ]; then
+    sed -i "s/^StartServers.*/StartServers             4/" $MPM_CONF
+    sed -i "s/^MinSpareServers.*/MinSpareServers          2/" $MPM_CONF
+    sed -i "s/^MaxSpareServers.*/MaxSpareServers          6/" $MPM_CONF
+    sed -i "s/^MaxRequestWorkers.*/MaxRequestWorkers      50/" $MPM_CONF
+    sed -i "s/^MaxConnectionsPerChild.*/MaxConnectionsPerChild  1000/" $MPM_CONF
+fi
+
+# KeepAlive tuning
+sed -i "s/^KeepAlive.*/KeepAlive On/" $APACHE_CONF
+sed -i "s/^#KeepAliveTimeout.*/KeepAliveTimeout 5/" $APACHE_CONF
+sed -i "s/^#MaxKeepAliveRequests.*/MaxKeepAliveRequests 100/" $APACHE_CONF
+
+systemctl restart apache2
+echo "[✓] Apache2 tuning selesai."
+
+
+# ---- Tuning PHP-FPM ----
+echo "[3/13] Tuning PHP-FPM untuk performa eRapor SMK..."
+PHP_FPM_POOL="/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf"
+
+if [ -f "$PHP_FPM_POOL" ]; then
+    sed -i "s/^pm.max_children = .*/pm.max_children = 20/" $PHP_FPM_POOL
+    sed -i "s/^pm.start_servers = .*/pm.start_servers = 4/" $PHP_FPM_POOL
+    sed -i "s/^pm.min_spare_servers = .*/pm.min_spare_servers = 2/" $PHP_FPM_POOL
+    sed -i "s/^pm.max_spare_servers = .*/pm.max_spare_servers = 6/" $PHP_FPM_POOL
+fi
+
+# Tuning php.ini
+PHP_INI="/etc/php/${PHP_VERSION}/fpm/php.ini"
+if [ -f "$PHP_INI" ]; then
+    sed -i "s/^memory_limit = .*/memory_limit = 512M/" $PHP_INI
+    sed -i "s/^max_execution_time = .*/max_execution_time = 300/" $PHP_INI
+    sed -i "s/^upload_max_filesize = .*/upload_max_filesize = 100M/" $PHP_INI
+    sed -i "s/^post_max_size = .*/post_max_size = 100M/" $PHP_INI
+fi
+
+systemctl restart php${PHP_VERSION}-fpm
+echo "[✓] PHP-FPM tuning selesai."
+
+
 # ---- Setup PostgreSQL ----
 echo "[4/13] Membuat database PostgreSQL..."
 sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
@@ -52,6 +113,29 @@ sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
 sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_USER;"
 sudo -u postgres psql -d $DB_NAME -c "ALTER DATABASE $DB_NAME OWNER TO $DB_USER;"
+
+# ---- Tuning PostgreSQL ----
+echo "[4/13] Tuning PostgreSQL untuk performa eRapor SMK..."
+PG_CONF="/etc/postgresql/$(psql -V | awk '{print $3}' | cut -d. -f1,2)/main/postgresql.conf"
+
+if [ -f "$PG_CONF" ]; then
+    RAM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+    RAM_MB=$((RAM_KB/1024))
+    SHARED_BUFFERS=$((RAM_MB/4))   # 25% RAM
+    WORK_MEM=16MB
+    MAX_CONNECTIONS=50
+    MAINTENANCE_WORK_MEM=128MB
+    EFFECTIVE_CACHE_SIZE=$((RAM_MB/2))MB
+
+    sed -i "s/^#*shared_buffers = .*/shared_buffers = ${SHARED_BUFFERS}MB/" $PG_CONF
+    sed -i "s/^#*work_mem = .*/work_mem = $WORK_MEM/" $PG_CONF
+    sed -i "s/^#*max_connections = .*/max_connections = $MAX_CONNECTIONS/" $PG_CONF
+    sed -i "s/^#*maintenance_work_mem = .*/maintenance_work_mem = $MAINTENANCE_WORK_MEM/" $PG_CONF
+    sed -i "s/^#*effective_cache_size = .*/effective_cache_size = $EFFECTIVE_CACHE_SIZE/" $PG_CONF
+fi
+
+systemctl restart postgresql
+echo "[✓] PostgreSQL tuning selesai."
 
 # ---- Clone eRapor ----
 echo "[5/13] Clone repo eRapor SMK..."
@@ -159,6 +243,8 @@ echo "APP_URL  : http://$SERVER_IP"
 echo "Redis    : Terpasang dan terhubung ke Laravel"
 echo "Folder eRapor berada di: /var/www/erapor"
 echo "Buka di browser: http://$SERVER_IP"
+echo "Log instalasi tersimpan di: $LOG_FILE"
+echo "Jika ada error, silakan cek log untuk troubleshoot."
 echo ""
 echo "📌 Spesifikasi Server & Versi Paket:"
 echo "OS        : $(lsb_release -ds)"
