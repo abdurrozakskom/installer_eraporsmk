@@ -1,70 +1,65 @@
 #!/bin/bash
+
 # =========================================================
 # Auto Installer eRapor SMK 7
 # by Abdur Rozak, SMKS YASMIDA Ambarawa
 # GitHub: https://github.com/abdurrozakskom
 # License: MIT
 # =========================================================
-# Permission is hereby granted, free of charge, to any person
-# obtaining a copy of this software and associated documentation
-# files (the "Software"), to deal in the Software without
-# restriction, including without limitation the rights to use,
-# copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following
-# conditions:
-# The above copyright notice and this permission notice shall be
-# included in all copies or substantial portions of the Software.
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
-# =========================================================
 
+# ---- Warna ----
+GREEN="\e[32m"
+YELLOW="\e[33m"
+RED="\e[31m"
+BLUE="\e[34m"
+CYAN="\e[36m"
+RESET="\e[0m"
+
+# ---- Pastikan root ----
 if [ "$EUID" -ne 0 ]; then
-  echo "❌ Jalankan sebagai root (sudo ./install_erapor.sh)"
-  exit
+    echo -e "${RED}❌ Jalankan sebagai root (sudo ./install_erapor.sh)${RESET}"
+    exit
 fi
 
-# Lokasi log file
-# Membuat log file dan mengalihkan semua output stdout & stderr
-exec > >(tee -a "$LOG_FILE") 2>&1
-mkdir -p /var/log/erapor
-LOG_FILE="/var/log/erapor/erapor_install.log"
+# ---- Logging ----
+mkdir -p /var/log/eraporsmk
+LOG_FILE="/var/log/eraporsmk/erapor_install.log"
 touch $LOG_FILE
 exec > >(tee -a "$LOG_FILE") 2>&1
 
-echo "=== Mulai instalasi eRapor SMK $(date) ==="
-
+echo -e "${CYAN}=== Mulai instalasi eRapor SMK $(date) ===${RESET}"
 
 # ---- Input User ----
-read -p "Masukkan IP server (contoh: 192.168.66.99): " SERVER_IP
-read -p "Masukkan APP Name (contoh: eRapor SMK): " APP_NAME
-read -p "Masukkan nama database PostgreSQL: " DB_NAME
-read -p "Masukkan username database: " DB_USER
-read -sp "Masukkan password database: " DB_PASS
-echo ""
+echo -e "${YELLOW}[INPUT] Silakan masukkan konfigurasi eRapor SMK:${RESET}"
+read -p "IP Server (contoh: 192.168.66.99): " SERVER_IP
+read -p "APP_NAME (contoh: eRapor SMK): " APP_NAME
+read -p "Nama DB PostgreSQL: " DB_NAME
+read -p "Username DB PostgreSQL: " DB_USER
+read -sp "Password DB PostgreSQL: " DB_PASS
+echo -e "\n"
 
-# ---- Update Paket ----
-echo "[1/13] Update Sistem & Upgrade Sistem"
+# ---- Update Sistem ----
+echo -e "${BLUE}[1/17]  🔄 Update & Upgrade Sistem...${RESET}"
 apt update && apt upgrade -y
+echo -e "${GREEN}[✓] Sistem updated.${RESET}\n"
 
-# ---- Install Paket ----
-echo "[2/13] Install Paket Pendukung"
-apt install -y unzip curl cowsay
+# ---- Paket Pendukung ----
+echo -e "${BLUE}[2/17]  📦 Install Paket Pendukung...${RESET}"
+apt install -y unzip curl cowsay lsb-release
+echo -e "${GREEN}[✓] Paket pendukung terpasang.${RESET}\n"
 
-# ---- Install Paket LAMP Stack----
-echo "[3/13] Install Paket Apache2"
+# ---- Install LAMP Stack ----
+echo -e "${BLUE}[3/17]  🖥️ Install Apache2 + PHP + PostgreSQL + Redis...${RESET}"
 apt install -y apache2 libapache2-mod-fcgid \
-    php php-cli php-fpm php-pgsql php-xml php-mbstring php-curl php-zip php-bcmath php-gd php-redis \
-    composer postgresql postgresql-contrib redis-server sudo lsb-release
+php php-cli php-fpm php-pgsql php-xml php-mbstring php-curl php-zip php-bcmath php-gd php-redis \
+composer postgresql postgresql-contrib redis-server
+echo -e "${GREEN}[✓] LAMP Stack terpasang.${RESET}\n"
 
 # ---- Tuning Apache2 ----
-echo "[3/13] Tuning Apache2 untuk performa eRapor SMK..."
-
-# Pastikan menggunakan mpm_prefork
+echo -e "${BLUE}[4/17]  ⚡ Tuning Apache2...${RESET}"
 a2enmod mpm_prefork >/dev/null 2>&1
-
-APACHE_CONF="/etc/apache2/apache2.conf"
 MPM_CONF="/etc/apache2/mods-available/mpm_prefork.conf"
-
+APACHE_CONF="/etc/apache2/apache2.conf"
 if [ -f "$MPM_CONF" ]; then
     sed -i "s/^StartServers.*/StartServers             4/" $MPM_CONF
     sed -i "s/^MinSpareServers.*/MinSpareServers          2/" $MPM_CONF
@@ -72,80 +67,49 @@ if [ -f "$MPM_CONF" ]; then
     sed -i "s/^MaxRequestWorkers.*/MaxRequestWorkers      50/" $MPM_CONF
     sed -i "s/^MaxConnectionsPerChild.*/MaxConnectionsPerChild  1000/" $MPM_CONF
 fi
-
-# KeepAlive tuning
 sed -i "s/^KeepAlive.*/KeepAlive On/" $APACHE_CONF
 sed -i "s/^#KeepAliveTimeout.*/KeepAliveTimeout 5/" $APACHE_CONF
 sed -i "s/^#MaxKeepAliveRequests.*/MaxKeepAliveRequests 100/" $APACHE_CONF
-
 systemctl restart apache2
-echo "[✓] Apache2 tuning selesai."
-
+echo -e "${GREEN}[✓] Apache2 tuning selesai.${RESET}\n"
 
 # ---- Tuning PHP-FPM ----
-echo "[3/13] Tuning PHP-FPM untuk performa eRapor SMK..."
-PHP_FPM_POOL="/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf"
-
+echo -e "${BLUE}[5/17]  ⚡ Tuning PHP-FPM...${RESET}"
+PHP_FPM_POOL="/etc/php/$(php -v | head -n1 | awk '{print $2}' | cut -d. -f1,2)/fpm/pool.d/www.conf"
+PHP_INI="/etc/php/$(php -v | head -n1 | awk '{print $2}' | cut -d. -f1,2)/fpm/php.ini"
 if [ -f "$PHP_FPM_POOL" ]; then
     sed -i "s/^pm.max_children = .*/pm.max_children = 20/" $PHP_FPM_POOL
     sed -i "s/^pm.start_servers = .*/pm.start_servers = 4/" $PHP_FPM_POOL
     sed -i "s/^pm.min_spare_servers = .*/pm.min_spare_servers = 2/" $PHP_FPM_POOL
     sed -i "s/^pm.max_spare_servers = .*/pm.max_spare_servers = 6/" $PHP_FPM_POOL
 fi
-
-# Tuning php.ini
-PHP_INI="/etc/php/${PHP_VERSION}/fpm/php.ini"
 if [ -f "$PHP_INI" ]; then
     sed -i "s/^memory_limit = .*/memory_limit = 512M/" $PHP_INI
     sed -i "s/^max_execution_time = .*/max_execution_time = 300/" $PHP_INI
     sed -i "s/^upload_max_filesize = .*/upload_max_filesize = 100M/" $PHP_INI
     sed -i "s/^post_max_size = .*/post_max_size = 100M/" $PHP_INI
 fi
-
-systemctl restart php${PHP_VERSION}-fpm
-echo "[✓] PHP-FPM tuning selesai."
-
+systemctl restart php*-fpm
+echo -e "${GREEN}[✓] PHP-FPM tuning selesai.${RESET}\n"
 
 # ---- Setup PostgreSQL ----
-echo "[4/13] Membuat database PostgreSQL..."
+echo -e "${BLUE}[6/17]  🗄️ Setup PostgreSQL...${RESET}"
 sudo -u postgres psql -c "CREATE DATABASE $DB_NAME;"
 sudo -u postgres psql -c "CREATE USER $DB_USER WITH PASSWORD '$DB_PASS';"
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
 sudo -u postgres psql -d $DB_NAME -c "GRANT ALL PRIVILEGES ON SCHEMA public TO $DB_USER;"
 sudo -u postgres psql -d $DB_NAME -c "ALTER DATABASE $DB_NAME OWNER TO $DB_USER;"
+echo -e "${GREEN}[✓] Database siap digunakan.${RESET}\n"
 
-# ---- Tuning PostgreSQL ----
-echo "[4/13] Tuning PostgreSQL untuk performa eRapor SMK..."
-PG_CONF="/etc/postgresql/$(psql -V | awk '{print $3}' | cut -d. -f1,2)/main/postgresql.conf"
-
-if [ -f "$PG_CONF" ]; then
-    RAM_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
-    RAM_MB=$((RAM_KB/1024))
-    SHARED_BUFFERS=$((RAM_MB/4))   # 25% RAM
-    WORK_MEM=16MB
-    MAX_CONNECTIONS=50
-    MAINTENANCE_WORK_MEM=128MB
-    EFFECTIVE_CACHE_SIZE=$((RAM_MB/2))MB
-
-    sed -i "s/^#*shared_buffers = .*/shared_buffers = ${SHARED_BUFFERS}MB/" $PG_CONF
-    sed -i "s/^#*work_mem = .*/work_mem = $WORK_MEM/" $PG_CONF
-    sed -i "s/^#*max_connections = .*/max_connections = $MAX_CONNECTIONS/" $PG_CONF
-    sed -i "s/^#*maintenance_work_mem = .*/maintenance_work_mem = $MAINTENANCE_WORK_MEM/" $PG_CONF
-    sed -i "s/^#*effective_cache_size = .*/effective_cache_size = $EFFECTIVE_CACHE_SIZE/" $PG_CONF
-fi
-
-systemctl restart postgresql
-echo "[✓] PostgreSQL tuning selesai."
-
-# ---- Clone eRapor ----
-echo "[5/13] Clone repo eRapor SMK..."
-cd /var/www/
-git clone https://github.com/eraporsmk/erapor7.git erapor
-cd erapor
+# ---- Setup Laravel eRapor SMK ----
+echo -e "${BLUE}[7/17]  🚀 Setup Laravel eRapor SMK...${RESET}"
+cd /var/www
+git clone https://github.com/eraporsmk/erapor7.git eraporsmk
+cd eraporsmk
 cp .env.example .env
 
 # ---- Update .env (APP + DB + Redis) ----
-echo "[6/13] Konfigurasi .env..."
+echo -e "${BLUE}[8/17] Konfigurasi .env..."
 sed -i "s/^APP_NAME=.*/APP_NAME=\"$APP_NAME\"/" .env
 sed -i "s#^APP_URL=.*#APP_URL=http://$SERVER_IP#" .env
 
@@ -165,110 +129,96 @@ sed -i "s/REDIS_PASSWORD=.*/REDIS_PASSWORD=null/" .env
 sed -i "s/REDIS_PORT=.*/REDIS_PORT=6379/" .env
 
 # ---- Install Composer Dependencies ----
-echo "[7/13] Install Composer dependencies (vendor)..."
+echo -e "${BLUE}[9/17] Install Composer dependencies (vendor)..."
 COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # ---- Laravel Setup ----
-echo "[8/13] Setup Laravel..."
+echo -e "${BLUE}[10/17] Setup Laravel..."
 php artisan key:generate
 php artisan migrate --no-interaction
 php artisan db:seed --no-interaction
 
 # ---- Storage link check ----
-echo "[9/13] Storage link check..."
+echo -e "${BLUE}[11/17] Storage link check..."
 if [ ! -L public/storage ]; then
     php artisan storage:link
 else
-    echo "[i] Storage link sudah ada, skip."
+    echo -e "${BLUE}[i] Storage link sudah ada, skip."
 fi
 
 # ---- Fix Permission & Clear Cache ----
-echo "[10/13] Fix permission & clear cache..."
-chown -R www-data:www-data /var/www/erapor
-chmod -R 775 /var/www/erapor/storage /var/www/erapor/bootstrap/cache
+echo -e "${BLUE}[12/17] Fix permission & clear cache..."
+chown -R www-data:www-data /var/www/eraporsmk
+chmod -R 775 /var/www/eraporsmk/storage /var/www/eraporsmk/bootstrap/cache
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
+echo -e "${GREEN}[✓] Laravel setup selesai.${RESET}\n"
 
 # ---- Restart Redis ----
-echo "[11/13] Restart Redis server..."
+echo -e "${BLUE}[13/17] Restart Redis server..."
 systemctl enable redis-server
 systemctl restart redis-server
 
-# ---- Apache VirtualHost ----
-echo "[12/13] Konfigurasi Apache VirtualHost..."
-PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")
-VHOST_FILE="/etc/apache2/sites-available/erapor.conf"
 
-cat > $VHOST_FILE <<EOL
+# ---- VirtualHost ----
+echo -e "${BLUE}[14/17]  🌐 Setup VirtualHost Apache...${RESET}"
+VHOST_CONF="/etc/apache2/sites-available/eraporsmk.conf"
+cat <<EOF > $VHOST_CONF
 <VirtualHost *:80>
     ServerName $SERVER_IP
-    DocumentRoot /var/www/erapor/public
-
-    <Directory /var/www/erapor/public>
+    DocumentRoot /var/www/eraporsmk/public
+    <Directory /var/www/eraporsmk/public>
         AllowOverride All
-        Require all granted
     </Directory>
-
-    <FilesMatch ".+\.php$">
-        SetHandler "proxy:unix:/run/php/php${PHP_VERSION}-fpm.sock|fcgi://localhost/"
-    </FilesMatch>
-
-    ErrorLog \${APACHE_LOG_DIR}/erapor-error.log
-    CustomLog \${APACHE_LOG_DIR}/erapor-access.log combined
 </VirtualHost>
-EOL
-
-a2ensite erapor.conf
+EOF
+a2ensite eraporsmk.conf
+systemctl reload apache2
 a2enmod proxy_fcgi setenvif rewrite
-systemctl restart apache2
 systemctl restart php${PHP_VERSION}-fpm
+echo -e "${GREEN}[✓] VirtualHost siap.${RESET}\n"
 
 # ---- Update Versi Aplikasi ----
-echo "[13/13] Update Versi Aplikasi"
+echo -e "${BLUE}[15/17] Update Versi Aplikasi"
 php artisan erapor:update
+echo -e "${GREEN}[✓] Update Versi Aplikasip selesai.${RESET}\n"
 
 # ---- Fun cowsay ----
 if command -v cowsay >/dev/null 2>&1; then
     cowsay "eRaporSMK"
 else
-    echo "[i] Install cowsay untuk melihat pesan lucu: sudo apt install cowsay"
+    echo -e "${YELLOW}[i] Install cowsay untuk tampilan lucu: sudo apt install cowsay${RESET}"
 fi
 
-# ---- Komponen yang berhasil diinstall ----
-echo -e "${GREEN}✔ Komponen berhasil diinstall:${RESET}"
-echo -e "${GREEN}- Apache2${RESET}"
-echo -e "${GREEN}- PHP + PHP-FPM${RESET}"
-echo -e "${GREEN}- PostgreSQL${RESET}"
-echo -e "${GREEN}- Redis${RESET}"
-echo -e "${GREEN}- Laravel (eRapor SMK)${RESET}"
-echo -e "${GREEN}- Composer dependencies${RESET}"
-echo -e "${GREEN}- Apache2 tuning${RESET}"
-echo -e "${GREEN}- PHP + PHP-FPM tuning${RESET}"
-echo -e "${GREEN}- PostgreSQL tuning${RESET}"
-echo -e "${GREEN}- Logging instalasi: /var/log/erapor/erapor_install.log${RESET}"
+# ---- Summary ----
+echo -e "${CYAN}[16/17]  📋 Summary Instalasi:${RESET}"
+echo -e "${GREEN}✔ APP_NAME  : $APP_NAME${RESET}"
+echo -e "${GREEN}✔ APP_URL   : http://$SERVER_IP${RESET}"
+echo -e "${GREEN}✔ Folder    : /var/www/eraporsmk${RESET}"
+echo -e "${GREEN}✔ Apache2   : Terpasang & Tuning${RESET}"
+echo -e "${GREEN}✔ PHP-FPM   : Terpasang & Tuning${RESET}"
+echo -e "${GREEN}✔ PostgreSQL: Terpasang & Tuning${RESET}"
+echo -e "${GREEN}✔ Redis     : Terpasang${RESET}"
+echo -e "${GREEN}✔ Laravel   : eRapor SMK siap digunakan${RESET}"
+echo -e "${GREEN}✔ Database  : ${DB_NAME}${RESET}"
+echo -e "${GREEN}✔ DB User   : ${DB_USER}${RESET}"
+echo -e "${GREEN}✔ DB Pass   : ${DB_PASS}${RESET}"
+echo -e "${GREEN}✔ Logging   : $LOG_FILE${RESET}"
+echo ""
+echo -e "${CYAN}📌 Credit Author:${RESET}"
+echo -e "${YELLOW}Abdur Rozak, SMKS YASMIDA Ambarawa${RESET}"
+echo -e "GitHub: https://github.com/abdurrozakskom"
+echo -e "Donasi: https://www.youtube.com/@AbdurRozakSKom"
 
-# ---- Summary & Info Server ----
-echo "[DONE] Instalasi selesai! Info server & versi paket:"
-echo "🎉 Instalasi eRapor SMK selesai!"
-echo "APP_NAME : $APP_NAME"
-echo "APP_URL  : http://$SERVER_IP"
-echo "Redis    : Terpasang dan terhubung ke Laravel"
-echo "Folder eRapor berada di: /var/www/erapor"
-echo "Buka di browser: http://$SERVER_IP"
-echo "Log instalasi tersimpan di: $LOG_FILE"
-echo "Jika ada error, silakan cek log untuk troubleshoot."
-echo ""
-echo "📌 Credit Author:"
-echo "Script ini dibuat oleh: Abdur Rozak, SMKS YASMIDA Ambarawa"
-echo "GitHub: https://github.com/abdurrozakskom/"
-echo ""
-echo "📌 Spesifikasi Server & Versi Paket:"
-echo "OS        : $(lsb_release -ds)"
-echo "Kernel    : $(uname -r)"
-echo "Apache    : $(apache2 -v | grep 'Server version' | awk '{print $3}')"
-echo "PHP       : $(php -v | head -n 1 | awk '{print $2}')"
-echo "PostgreSQL: $(psql --version | awk '{print $3}')"
-echo "Redis     : $(redis-server --version | awk '{print $3}' | sed 's/=//')"
-echo "Composer  : $(composer --version | awk '{print $3}')"
+echo -e "${CYAN}📌 Spesifikasi Server:${RESET}"
+echo -e "${GREEN}- OS        : $(lsb_release -ds)${RESET}"
+echo -e "${GREEN}- Kernel    : $(uname -r)${RESET}"
+echo -e "${GREEN}- Apache    : $(apache2 -v | grep 'Server version' | awk '{print $3}')${RESET}"
+echo -e "${GREEN}- PHP       : $(php -v | head -n1 | awk '{print $2}')${RESET}"
+echo -e "${GREEN}- PostgreSQL: $(psql --version | awk '{print $3}')${RESET}"
+echo -e "${GREEN}- Redis     : $(redis-server --version | awk '{print $3}' | sed 's/=//')${RESET}"
+echo -e "${GREEN}- Composer  : $(composer --version | awk '{print $3}')${RESET}"
+
+echo -e "${CYAN}[17/17]  🎉 Instalasi selesai! Selamat menggunakan eRapor SMK 🎉${RESET}"
