@@ -3,9 +3,20 @@
 # =========================================================
 # Auto Installer eRapor SMK 7
 # by Abdur Rozak, SMKS YASMIDA Ambarawa
-# GitHub: https://github.com/abdurrozakskom
+# GitHub   : https://github.com/abdurrozakskom
+# YouTube  : https://www.youtube.com/@AbdurRozakSKom
+# Instagram: https://instagram.com/abdurrozak.skom
+# Facebook : https://facebook.com/abdurrozak.skom
+# TikTok   : https://tiktok.com/abdurrozak.skom
+# Threads  : https://threads.com/@abdurrozak.skom
+# Lynk.id  : https://lynk.id/abdurrozak.skom
+# Donasi:
+# • Saweria  : https://saweria.co/abdurrozak.skom
+# • Trakteer : https://trakteer.id/abdurrozak.skom
+# • Paypal   : https://paypal.me/abdurrozakskom
 # License: MIT
 # =========================================================
+
 
 # ---- Warna ----
 GREEN="\e[32m"
