@@ -56,9 +56,9 @@ Aku mencintai kalian sepenuh hati.
 
 Jika script ini bermanfaat untuk instalasi eRapor SMK, Anda dapat mendukung pengembang melalui:
 
-- **Saweria** : [https://saweria.co/abdurrozak](https://saweria.co/abdurrozak)  
-- **Trakteer** : [https://trakteer.id/abdurrozak](https://trakteer.id/abdurrozak)  
-- **Paypal**  : [https://paypal.me/abdurrozak](https://paypal.me/abdurrozak)  
+- **Saweria** : [https://saweria.co/abdurrozakskom](https://saweria.co/abdurrozakskom)  
+- **Trakteer** : [https://trakteer.id/abdurrozakskom](https://trakteer.id/abdurrozakskom)  
+- **Paypal**  : [https://paypal.me/abdurrozakskom](https://paypal.me/abdurrozakskom)  
 
 Setiap donasi sangat membantu untuk pengembangan fitur baru dan pemeliharaan script.
 
