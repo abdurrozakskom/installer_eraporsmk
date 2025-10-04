@@ -24,7 +24,7 @@ Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan sta
   - `php artisan key:generate`
   - `php artisan storage:link`
 - Setup VirtualHost Apache dengan PHP-FPM.
-- Domain lokal bisa langsung digunakan (contoh: `http://erapor.local`).
+- Domain lokal bisa langsung digunakan (contoh: `http://erapor.smkyasmida.sch.id`).
 
 ---
 
@@ -106,7 +106,7 @@ Script akan meminta:
 ## 🔑 Login Awal
 Setelah instalasi selesai, buka browser ke:
 ```bash
-http://eraporsmk.local
+http://erapor.smkyasmida.sch.id
 http://ipaddress
 ```
 User & password default sesuai dengan dokumentasi resmi eRapor SMK.
