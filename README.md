@@ -57,7 +57,8 @@ Script akan meminta:
 ## 🔑 Login Awal
 Setelah instalasi selesai, buka browser ke:
 ```bash
-sudo ./install_erapor.sh](http://erapor.local
+http://erapor.local
+http://ipaddress
 ```
 User & password default sesuai dengan dokumentasi resmi eRapor SMK.
 
