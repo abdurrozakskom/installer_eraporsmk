@@ -19,7 +19,7 @@
 # =========================================================
 
 if [ "$EUID" -ne 0 ]; then
-  echo "❌ Jalankan sebagai root (sudo ./install_erapor_ip_final_v5_allinone.sh)"
+  echo "❌ Jalankan sebagai root (sudo ./install_erapor.sh)"
   exit
 fi
 
@@ -235,6 +235,20 @@ if command -v cowsay >/dev/null 2>&1; then
 else
     echo "[i] Install cowsay untuk melihat pesan lucu: sudo apt install cowsay"
 fi
+
+# ---- Komponen yang berhasil diinstall ----
+echo -e "${GREEN}✔ Komponen berhasil diinstall:${RESET}"
+echo -e "${GREEN}- Apache2${RESET}"
+echo -e "${GREEN}- PHP + PHP-FPM${RESET}"
+echo -e "${GREEN}- PostgreSQL${RESET}"
+echo -e "${GREEN}- Redis${RESET}"
+echo -e "${GREEN}- Laravel (eRapor SMK)${RESET}"
+echo -e "${GREEN}- Composer dependencies${RESET}"
+echo -e "${GREEN}- Apache2 tuning${RESET}"
+echo -e "${GREEN}- PHP + PHP-FPM tuning${RESET}"
+echo -e "${GREEN}- PostgreSQL tuning${RESET}"
+echo -e "${GREEN}- Logging instalasi: /var/log/erapor/erapor_install.log${RESET}"
+
 # ---- Summary & Info Server ----
 echo "[DONE] Instalasi selesai! Info server & versi paket:"
 echo "🎉 Instalasi eRapor SMK selesai!"
