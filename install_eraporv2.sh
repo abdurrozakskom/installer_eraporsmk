@@ -33,9 +33,9 @@ echo -e "${CYAN}=== Mulai instalasi eRapor SMK $(date) ===${RESET}"
 echo -e "${YELLOW}[INPUT] Silakan masukkan konfigurasi eRapor SMK:${RESET}"
 read -p "IP Server (contoh: 192.168.66.99): " SERVER_IP
 read -p "APP_NAME (contoh: eRapor SMK): " APP_NAME
-read -p "Database PostgreSQL: " DB_NAME
-read -p "Username DB: " DB_USER
-read -sp "Password DB: " DB_PASS
+read -p "Nama DB PostgreSQL: " DB_NAME
+read -p "Username DB PostgreSQL: " DB_USER
+read -sp "Password DB PostgreSQL: " DB_PASS
 echo -e "\n"
 
 # ---- Update Sistem ----
