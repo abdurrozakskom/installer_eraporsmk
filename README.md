@@ -29,6 +29,7 @@ Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan sta
 ---
 
 ## 👨‍🍼PERSEMBAHAN
+```bash
 Demi pertemuan dengan-Nya
 Demi kerinduan kepada utusan-Nya
 Demi bakti kepada orangtua
@@ -48,7 +49,7 @@ Dan Anaku tersayang
 ❤️**Zein Khalisa Arivia**
 ❤️**Muhammad Zain Al-Fatih**
 Aku mencintai kalian sepenuh hati.
-
+```
 ---
 
 ## 💖 Donasi
