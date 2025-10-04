@@ -256,8 +256,8 @@ echo -e "${YELLOW}YouTube: \e]8;;https://www.youtube.com/@AbdurRozakSKom\ahttps:
 echo ""
 # ---- Donasi ----
 echo -e "${CYAN}💖 Jika script ini bermanfaat, silakan donasi untuk mendukung pengembangan:${RESET}"
-echo -e "${YELLOW}• Saweria  : \e]8;;https://saweria.co/abdurrozak\ahttps://saweria.co/abdurrozakskom\e]8;;\a${RESET}"
-echo -e "${YELLOW}• Trakteer : \e]8;;https://trakteer.id/abdurrozak\ahttps://trakteer.id/abdurrozakskom\e]8;;\a${RESET}"
+echo -e "${YELLOW}• Saweria  : \e]8;;https://saweria.co/abdurrozakskom\ahttps://saweria.co/abdurrozakskom\e]8;;\a${RESET}"
+echo -e "${YELLOW}• Trakteer : \e]8;;https://trakteer.id/abdurrozakskom\ahttps://trakteer.id/abdurrozakskom\e]8;;\a${RESET}"
 echo -e "${YELLOW}• Paypal   : \e]8;;https://paypal.me/abdurrozakskom\ahttps://paypal.me/abdurrozakskom\e]8;;\a${RESET}"
 echo ""
 # ---- Sosial Media ----
