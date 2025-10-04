@@ -26,7 +26,16 @@ Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan sta
 ---
 
 ## ⚙️ Cara Penggunaan
-
+### 0. Persiapan
+- Update Repository Sistem Operasi Servernya
+- Update
+```bash
+apt update
+```
+- Install Git
+```bash
+apt install git
+```
 ### 1. Clone Repo
 ```bash
 git clone https://github.com/abdurrozakskom/installer_eraporsmk.git
