@@ -27,6 +27,30 @@ Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan sta
 - Domain lokal bisa langsung digunakan (contoh: `http://erapor.local`).
 
 ---
+
+## 👨‍🍼PERSEMBAHAN
+Demi pertemuan dengan-Nya
+Demi kerinduan kepada utusan-Nya
+Demi bakti kepada orangtua
+Demi manfaat kepada sesama
+Untuk itulah Sharing Ilmu
+
+Semoga niat ini tetap lurus
+Semoga menjadi ibadah
+Semoga menjadi amal jariyah
+Semoga bermanfaat
+Aamiin
+
+Tak lupa tulisan ini saya persembahkan kepada :
+Istri saya tercinta
+❤️**Siti Nur Holida**
+Dan Anaku tersayang
+❤️**Zein Khalisa Arivia**
+❤️**Muhammad Zain Al-Fatih**
+Aku mencintai kalian sepenuh hati.
+
+---
+
 ## 💖 Donasi
 
 Jika script ini bermanfaat untuk instalasi eRapor SMK, Anda dapat mendukung pengembang melalui:
