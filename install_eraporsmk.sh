@@ -186,10 +186,13 @@ php artisan erapor:update
 echo -e "${GREEN}[✓] Update Versi Aplikasip selesai.${RESET}\n"
 
 # ---- Fun cowsay & Figlet ----
+cd
+clear
 cowsay "eRaporSMK"
-figlet -c "eRaporSMK"
+figlet "eRaporSMK"
 
 # ---- Summary ----
+echo -e "${GREEN}==========================================${RESET}"
 echo -e "${CYAN}[16/17]  📋 Summary Instalasi:${RESET}"
 echo -e "${GREEN}✔ APP_NAME  : $APP_NAME${RESET}"
 echo -e "${GREEN}✔ APP_URL   : \e]8;;http://$SERVER_IP\ahttp://$SERVER_IP\e]8;;\a${RESET}"
@@ -203,6 +206,7 @@ echo -e "${GREEN}✔ Database  : ${DB_NAME}${RESET}"
 echo -e "${GREEN}✔ DB User   : ${DB_USER}${RESET}"
 echo -e "${GREEN}✔ DB Pass   : ${DB_PASS}${RESET}"
 echo -e "${GREEN}✔ Logging   : $LOG_FILE${RESET}"
+echo -e "${GREEN}==========================================${RESET}"
 echo ""
 echo -e "${CYAN}📌 Spesifikasi Server:${RESET}"
 echo -e "${GREEN}- OS        : $(lsb_release -ds)${RESET}"
@@ -211,22 +215,22 @@ echo -e "${GREEN}- Apache    : $(apache2 -v | grep 'Server version' | awk '{prin
 echo -e "${GREEN}- PHP       : $(php -v | head -n1 | awk '{print $2}')${RESET}"
 echo -e "${GREEN}- PostgreSQL: $(psql --version | awk '{print $3}')${RESET}"
 echo -e "${GREEN}- Redis     : $(redis-server --version | awk '{print $3}' | sed 's/=//')${RESET}"
-echo -e "${GREEN}- Composer  : $(composer --version | awk '{print $3}')${RESET}"
 echo ""
 echo -e "${CYAN}[17/17]  🎉 Instalasi selesai! Selamat menggunakan eRapor SMK 🎉${RESET}"
 echo ""
+echo -e "${GREEN}==========================================${RESET}"
 # ---- Credit Author ----
 echo -e "${CYAN}📌 Credit Author:${RESET}"
 echo -e "${YELLOW}Abdur Rozak, SMKS YASMIDA Ambarawa${RESET}"
 echo -e "${YELLOW}GitHub : \e]8;;https://github.com/abdurrozakskom\ahttps://github.com/abdurrozakskom\e]8;;\a${RESET}"
 echo -e "${YELLOW}YouTube: \e]8;;https://www.youtube.com/@AbdurRozakSKom\ahttps://www.youtube.com/@AbdurRozakSKom\e]8;;\a${RESET}"
-
+echo ""
 # ---- Donasi ----
 echo -e "${CYAN}💖 Jika script ini bermanfaat, silakan donasi untuk mendukung pengembangan:${RESET}"
 echo -e "${YELLOW}• Saweria  : \e]8;;https://saweria.co/abdurrozak\ahttps://saweria.co/abdurrozakskom\e]8;;\a${RESET}"
 echo -e "${YELLOW}• Trakteer : \e]8;;https://trakteer.id/abdurrozak\ahttps://trakteer.id/abdurrozakskom\e]8;;\a${RESET}"
 echo -e "${YELLOW}• Paypal   : \e]8;;https://paypal.me/abdurrozakskom\ahttps://paypal.me/abdurrozakskom\e]8;;\a${RESET}"
-
+echo ""
 # ---- Sosial Media ----
 echo -e "${CYAN}🌐 Ikuti sosial media resmi untuk update & info:${RESET}"
 echo -e "${YELLOW}• GitHub    : \e]8;;https://github.com/abdurrozakskom\ahttps://github.com/abdurrozakskom\e]8;;\a${RESET}"
@@ -236,4 +240,5 @@ echo -e "${YELLOW}• Facebook  : \e]8;;https://facebook.com/abdurrozak.skom\aht
 echo -e "${YELLOW}• TikTok    : \e]8;;https://tiktok.com/abdurrozak.skom\ahttps://tiktok.com/abdurrozak.skom\e]8;;\a${RESET}"
 echo -e "${YELLOW}• Threads   : \e]8;;https://threads.com/@abdurrozak.skom\ahttps://threads.com/@abdurrozak.skom\e]8;;\a${RESET}"
 echo -e "${YELLOW}• YouTube   : \e]8;;https://www.youtube.com/@AbdurRozakSKom\ahttps://www.youtube.com/@AbdurRozakSKom\e]8;;\a${RESET}"
-
+echo ""
+echo -e "${GREEN}- Composer  : $(composer --version -y | awk '{print $3}')${RESET}"
