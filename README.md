@@ -44,16 +44,14 @@ cd installer_eraporsmk
 ### 2. Beri izin eksekusi
 ```bash
 chmod +x install_erapor.sh
-chmod +x install_eraporv2.sh
 ```
 ### 3. Jalankan script
 ```bash
 sudo ./install_erapor.sh
-sudo ./install_eraporv2.sh
 ```
 ### 4. Isi data interaktif
 Script akan meminta:
-- Nama domain lokal (misalnya erapor.local)
+- Nama domain lokal (misalnya eraporsmk.local / ipaddress)
 - Nama database PostgreSQL
 - Username database
 - Password database
@@ -61,14 +59,14 @@ Script akan meminta:
 ---
 
 ## 📂 Lokasi Instalasi
-- Direktori aplikasi: /var/www/erapor.local/
-- VirtualHost Apache: /etc/apache2/sites-available/erapor.local.conf
+- Direktori aplikasi: /var/www/eraporsmk/
+- VirtualHost Apache: /etc/apache2/sites-available/eraporsmk.conf
 - Database: PostgreSQL (nama, user, password sesuai input)
 
 ## 🔑 Login Awal
 Setelah instalasi selesai, buka browser ke:
 ```bash
-http://erapor.local
+http://eraporsmk.local
 http://ipaddress
 ```
 User & password default sesuai dengan dokumentasi resmi eRapor SMK.
@@ -100,7 +98,7 @@ sudo nano /etc/hosts
 ```
 Tambahkan baris:
 ```bash
-127.0.0.1   erapor.local
+127.0.0.1   eraporsmk.local
 ```
 Jika error PHP extension, pastikan semua modul sudah terinstall:
 ```bash
