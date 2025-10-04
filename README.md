@@ -43,7 +43,7 @@ Semoga menjadi amal jariyah
 Semoga bermanfaat
 Aamiin
 
-Tak lupa tulisan ini saya persembahkan kepada :
+Tak lupa Script & Tulisan ini saya persembahkan kepada :
 Istri saya tercinta
 ❤️**Siti Nur Holida**
 Dan Anaku tersayang
