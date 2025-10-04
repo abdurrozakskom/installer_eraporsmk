@@ -10,6 +10,7 @@ Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan sta
 - PostgreSQL (DBMS utama eRapor SMK)
 - Composer + Laravel setup
 - Konfigurasi VirtualHost Apache
+- Tunning Sederhana
 
 ---
 
