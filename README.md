@@ -24,7 +24,17 @@ Script Bash untuk otomatisasi instalasi **eRaporSMK Latest Releases** dengan sta
 - Domain lokal bisa langsung digunakan (contoh: `http://erapor.local`).
 
 ---
+## 💖 Donasi
 
+Jika script ini bermanfaat untuk instalasi eRapor SMK, Anda dapat mendukung pengembang melalui:
+
+- **Saweria** : [https://saweria.co/abdurrozak](https://saweria.co/abdurrozak)  
+- **Trakteer** : [https://trakteer.id/abdurrozak](https://trakteer.id/abdurrozak)  
+- **Paypal**  : [https://paypal.me/abdurrozak](https://paypal.me/abdurrozak)  
+
+Setiap donasi sangat membantu untuk pengembangan fitur baru dan pemeliharaan script.
+
+---
 ## ⚙️ Cara Penggunaan
 ### 0. Persiapan
 - Update Repository Sistem Operasi Servernya
@@ -73,8 +83,20 @@ User & password default sesuai dengan dokumentasi resmi eRapor SMK.
 
 ---
 
+## 🌐 Sosial Media
+
+Ikuti saya di sosial media untuk tips, update, dan info terbaru seputar eRapor SMK:
+
+- **GitHub**    : [https://github.com/abdurrozakskom](https://github.com/abdurrozakskom)  
+- **Instagram** : [https://instagram.com/abdurrozak](https://instagram.com/abdurrozak)  
+- **Facebook**  : [https://facebook.com/abdurrozak](https://facebook.com/abdurrozak)  
+- **Twitter**   : [https://twitter.com/abdurrozak](https://twitter.com/abdurrozak)  
+- **YouTube**   : [https://youtube.com/@abdurrozak](https://youtube.com/@abdurrozak)  
+
+---
+
 ## 🛠️ Troubleshooting
-Jika *Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process*
+Jika error **Waiting for cache lock: Could not get lock /var/lib/dpkg/lock-frontend. It is held by process**
 ```bash
 ps aux | grep apt
 ```
